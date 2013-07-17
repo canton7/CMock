@@ -117,12 +117,12 @@ class CMockGeneratorUtils
     case(unity_func)
       when "UNITY_TEST_ASSERT_EQUAL_MEMORY"
         c_type_local = c_type.gsub(/\*$/,'')
-        lines << "    UNITY_TEST_ASSERT_EQUAL_MEMORY((void*)(#{pre}#{expected}), (void*)(#{pre}#{arg_name}), sizeof(#{c_type_local}), cmock_line, \"#{unity_msg}\");\n"
+        lines << "    UNITY_TEST_ASSERT_EQUAL_MEMORY((#{pre}#{expected}), (#{pre}#{arg_name}), sizeof(#{c_type_local}), cmock_line, \"#{unity_msg}\");\n"
       when "UNITY_TEST_ASSERT_EQUAL_MEMORY"
         lines << "    if (#{pre}#{expected} == NULL)\n"
         lines << "      { UNITY_TEST_ASSERT_NULL(#{pre}#{arg_name}, cmock_line, \"Expected NULL. #{unity_msg}\"); }\n"
         lines << "    else\n"
-        lines << "      { UNITY_TEST_ASSERT_EQUAL_MEMORY((void*)(#{pre}#{expected}), (void*)(#{pre}#{arg_name}), sizeof(#{c_type.sub('*','')}), cmock_line, \"#{unity_msg}\"); }\n"
+        lines << "      { UNITY_TEST_ASSERT_EQUAL_MEMORY((#{pre}#{expected}), (#{pre}#{arg_name}), sizeof(#{c_type.sub('*','')}), cmock_line, \"#{unity_msg}\"); }\n"
       when /_ARRAY/
         lines << "    if (#{pre}#{expected} == NULL)\n"
         lines << "      { UNITY_TEST_ASSERT_NULL(#{pre}#{arg_name}, cmock_line, \"Expected NULL. #{unity_msg}\"); }\n"
@@ -144,12 +144,12 @@ class CMockGeneratorUtils
     case(unity_func)
       when "UNITY_TEST_ASSERT_EQUAL_MEMORY"
         c_type_local = c_type.gsub(/\*$/,'')
-        lines << "    UNITY_TEST_ASSERT_EQUAL_MEMORY((void*)(#{pre}#{expected}), (void*)(#{pre}#{arg_name}), sizeof(#{c_type_local}), cmock_line, \"#{unity_msg}\");\n"
+        lines << "    UNITY_TEST_ASSERT_EQUAL_MEMORY((#{pre}#{expected}), (#{pre}#{arg_name}), sizeof(#{c_type_local}), cmock_line, \"#{unity_msg}\");\n"
       when "UNITY_TEST_ASSERT_EQUAL_MEMORY_ARRAY"
         lines << "    if (#{pre}#{expected} == NULL)\n"
         lines << "      { UNITY_TEST_ASSERT_NULL(#{pre}#{arg_name}, cmock_line, \"Expected NULL. #{unity_msg}\"); }\n"
         lines << "    else\n"
-        lines << "      { UNITY_TEST_ASSERT_EQUAL_MEMORY_ARRAY((void*)(#{pre}#{expected}), (void*)(#{pre}#{arg_name}), sizeof(#{c_type.sub('*','')}), #{depth_name}, cmock_line, \"#{unity_msg}\"); }\n"
+        lines << "      { UNITY_TEST_ASSERT_EQUAL_MEMORY_ARRAY((#{pre}#{expected}), (#{pre}#{arg_name}), sizeof(#{c_type.sub('*','')}), #{depth_name}, cmock_line, \"#{unity_msg}\"); }\n"
       when /_ARRAY/
         if (pre == '&')
           lines << "    #{unity_func}(#{pre}#{expected}, #{pre}#{arg_name}, #{depth_name}, cmock_line, \"#{unity_msg}\");\n"
@@ -175,13 +175,13 @@ class CMockGeneratorUtils
     case(unity_func)
       when "UNITY_TEST_ASSERT_EQUAL_MEMORY"
         c_type_local = c_type.gsub(/\*$/,'')
-        lines << "    UNITY_TEST_ASSERT_EQUAL_MEMORY((void*)(#{pre}#{expected}), (void*)(#{pre}#{arg_name}), sizeof(#{c_type_local}), cmock_line, \"#{unity_msg}\");\n"
+        lines << "    UNITY_TEST_ASSERT_EQUAL_MEMORY((#{pre}#{expected}), (#{pre}#{arg_name}), sizeof(#{c_type_local}), cmock_line, \"#{unity_msg}\");\n"
       when "UNITY_TEST_ASSERT_EQUAL_MEMORY_ARRAY"
         lines << "    if (#{pre}#{expected} == NULL)\n"
         lines << "      { UNITY_TEST_ASSERT_NULL(#{arg_name}, cmock_line, \"Expected NULL. #{unity_msg}\"); }\n"
         lines << ((depth_name != 1) ? "    else if (#{depth_name} == 0)\n      { UNITY_TEST_ASSERT_EQUAL_PTR(#{pre}#{expected}, #{pre}#{arg_name}, cmock_line, \"#{unity_msg}\"); }\n" : "")
         lines << "    else\n"
-        lines << "      { UNITY_TEST_ASSERT_EQUAL_MEMORY_ARRAY((void*)(#{pre}#{expected}), (void*)(#{pre}#{arg_name}), sizeof(#{c_type.sub('*','')}), #{depth_name}, cmock_line, \"#{unity_msg}\"); }\n"
+        lines << "      { UNITY_TEST_ASSERT_EQUAL_MEMORY_ARRAY((#{pre}#{expected}), (#{pre}#{arg_name}), sizeof(#{c_type.sub('*','')}), #{depth_name}, cmock_line, \"#{unity_msg}\"); }\n"
       when /_ARRAY/
         if (pre == '&')
           lines << "    #{unity_func}(#{pre}#{expected}, #{pre}#{arg_name}, #{depth_name}, cmock_line, \"#{unity_msg}\");\n"
