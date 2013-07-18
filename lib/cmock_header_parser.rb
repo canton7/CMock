@@ -46,7 +46,6 @@ class CMockHeaderParser
   private if $ThisIsOnlyATest.nil? ################
   
   def import_source(source)
-
     # void must be void for cmock _ExpectAndReturn calls to process properly, not some weird typedef which equates to void
     # to a certain extent, this action assumes we're chewing on pre-processed header files, otherwise we'll most likely just get stuff from @treat_as_void
     @local_as_void = @treat_as_void
@@ -128,9 +127,13 @@ class CMockHeaderParser
       return args if (arg =~ /^\s*((\.\.\.)|(void))\s*$/)   # we're done if we reach void by itself or ...
       arg_array = arg.split
       arg_elements = arg_array - @c_attributes              # split up words and remove known attributes
-      args << { :type   => (arg_type =arg_elements[0..-2].join(' ')), 
-                :name   => arg_elements[-1], 
-                :ptr?   => divine_ptr(arg_type),
+      name, suffix = arg_elements[-1].split('[', 2)
+      type = (arg_type =arg_elements[0..-2].join(' '))
+      args << { :type   => type, 
+                :name   => name, 
+                :array_suffix => suffix ? "[#{suffix}" : nil,
+                :array_equiv_type => suffix ? type + '*' : type,
+                :ptr?   => divine_ptr(arg_type) || !!suffix,
                 :const? => arg_array.include?('const')
               }
     end
@@ -148,7 +151,8 @@ class CMockHeaderParser
       return 'void'
     else
       c=0
-      arg_list.gsub!(/(\w+)(?:\s*\[[\s\d\w+-]*\])+/,'*\1')  # magically turn brackets into asterisks
+      arg_list.gsub!(/(\w)\s+\[/, '\1[')                    # Move array brackets up to the ends of arrays
+      # arg_list.gsub!(/(\w+)(?:\s*\[\(?[\s\d\w+-]*\)?\])+/,'*\1')  # magically turn brackets into asterisks
       arg_list.gsub!(/\s+\*/,'*')                           # remove space to place asterisks with type (where they belong)
       arg_list.gsub!(/\*(\w)/,'* \1')                       # pull asterisks away from arg to place asterisks with type (where they belong)
       
