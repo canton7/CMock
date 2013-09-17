@@ -50,8 +50,8 @@ class CMockGeneratorUtils
   end
   
   def code_assign_argument_quickly(dest, arg) 
-    if (arg[:ptr?] or @treat_as.include?(arg[:type]))
-      "  #{dest} = #{arg[:const?] ? "(#{arg[:type]})" : ''}#{arg[:name]};\n"
+    if (arg[:ptr?] or @treat_as.include?(arg[:array_equiv_type]))
+      "  #{dest} = #{arg[:const?] ? "(#{arg[:array_equiv_type]})" : ''}#{arg[:name]};\n"
     else
       "  memcpy(&#{dest}, &#{arg[:name]}, sizeof(#{arg[:type]}));\n"
     end
@@ -62,7 +62,7 @@ class CMockGeneratorUtils
       if (@arrays)
         args_string = function[:args].map do |m| 
           const_str = m[ :const? ] ? 'const ' : ''
-          m[:ptr?] ? "#{const_str}#{m[:type]} #{m[:name]}, int #{m[:name]}_Depth" : "#{const_str}#{m[:type]} #{m[:name]}"
+          m[:ptr?] ? "#{const_str}#{m[:array_equiv_type]} #{m[:name]}, int #{m[:name]}_Depth" : "#{const_str}#{m[:type]} #{m[:name]}#{m[:array_suffix]}"
         end.join(', ')
         "void CMockExpectParameters_#{function[:name]}(CMOCK_#{function[:name]}_CALL_INSTANCE* cmock_call_instance, #{args_string})\n{\n" + 
         function[:args].inject("") { |all, arg| all + code_add_an_arg_expectation(arg, (arg[:ptr?] ? "#{arg[:name]}_Depth" : 1) ) } +
@@ -96,8 +96,9 @@ class CMockGeneratorUtils
   #private ######################
   
   def lookup_expect_type(function, arg)
-    c_type     = arg[:type]
+    c_type     = arg[:array_equiv_type]
     arg_name   = arg[:name]
+    array_suffix = arg[:array_suffix]
     expected   = "cmock_call_instance->Expected_#{arg_name}"
     ignore     = "cmock_call_instance->IgnoreArg_#{arg_name}"
     unity_func = if ((arg[:ptr?]) and ((c_type =~ /\*\*/) or (@ptr_handling == :compare_ptr)))

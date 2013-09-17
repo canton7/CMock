@@ -26,7 +26,7 @@ class CMockGeneratorPluginArray
   def mock_function_declarations(function)
     return nil unless function[:contains_ptr?]
     args_call   = function[:args].map{|m| m[:ptr?] ? "#{m[:name]}, #{m[:name]}_Depth" : "#{m[:name]}"}.join(', ')
-    args_string = function[:args].map{|m| m[:ptr?] ? "#{m[:type]} #{m[:name]}, int #{m[:name]}_Depth" : "#{m[:type]} #{m[:name]}"}.join(', ')
+    args_string = function[:args].map{|m| m[:ptr?] ? "#{m[:array_equiv_type]} #{m[:name]}, int #{m[:name]}_Depth" : "#{m[:type]} #{m[:name]}"}.join(', ')
     if (function[:return][:void?])
       return "#define #{function[:name]}_ExpectWithArray(#{args_call}) #{function[:name]}_CMockExpectWithArray(__LINE__, #{args_call})\n" +
              "void #{function[:name]}_CMockExpectWithArray(UNITY_LINE_TYPE cmock_line, #{args_string});\n"
@@ -40,7 +40,7 @@ class CMockGeneratorPluginArray
     return nil unless function[:contains_ptr?]
     lines = []
     func_name = function[:name]
-    args_string = function[:args].map{|m| m[:ptr?] ? "#{m[:type]} #{m[:name]}, int #{m[:name]}_Depth" : "#{m[:type]} #{m[:name]}"}.join(', ')
+    args_string = function[:args].map{|m| m[:ptr?] ? "#{m[:array_equiv_type]} #{m[:name]}, int #{m[:name]}_Depth" : "#{m[:type]} #{m[:name]}"}.join(', ')
     call_string = function[:args].map{|m| m[:ptr?] ? "#{m[:name]}, #{m[:name]}_Depth" : m[:name]}.join(', ')
     if (function[:return][:void?])
       lines << "void #{func_name}_CMockExpectWithArray(UNITY_LINE_TYPE cmock_line, #{args_string})\n"
